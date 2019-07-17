@@ -3,3 +3,5 @@
 __pycache__
 token.txt
 test.py
+dist
+tgapi.egg-info
