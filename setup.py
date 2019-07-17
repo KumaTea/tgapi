@@ -1,20 +1,30 @@
 try:
     from setuptools import setup, find_packages
+    package = find_packages(exclude=['example', 'test', 'dist'])
 except ImportError:
     from distutils.core import setup
-
-requirements = ['requests']
+    package = ['tgapi']
 
 setup(
     name='tgapi',
     version='0.1.1',
     description='A Python module for I/O of Telegram bot API',
     author='KumaTea',
+    author_email='oudoubleyang@outlook.com',
     url='https://github.com/oudoubleyang/tgapi',
     license='GNU General Public License v3.0',
-    keywords='tgapi',
-    packages=find_packages(exclude=['example', 'test', 'dist']),
+    keywords=['tgapi', 'Telegram', 'API', 'IO'],
+    packages=package,
     include_package_data=True,
-    install_requires=requirements,
-    setup_requires=requirements,
+    install_requires=['requests'],
+    setup_requires=['requests'],
+    classifiers=[
+        'Development Status :: 4 - Beta',      # 3 - Alpha, 4 - Beta or 5 - Production/Stable
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+        'License :: OSI Approved :: GNU General Public License v3.0',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+    ],
 )
