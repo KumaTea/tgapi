@@ -12,7 +12,7 @@ setup(
     author='KumaTea',
     author_email='oudoubleyang@outlook.com',
     url='https://github.com/oudoubleyang/tgapi',
-    license='GNU General Public License v3.0',
+    license='MIT License',
     keywords=['tgapi', 'Telegram', 'API', 'IO'],
     packages=package,
     include_package_data=True,
@@ -22,7 +22,7 @@ setup(
         'Development Status :: 4 - Beta',      # 3 - Alpha, 4 - Beta or 5 - Production/Stable
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: GNU General Public License v3.0',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
