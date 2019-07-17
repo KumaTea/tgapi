@@ -19,10 +19,10 @@ def get_token():
 bot_token = get_token()
 api_url = f'https://api.telegram.org/{bot_token}/'
 
-
 # GET
 
-class get:
+
+class Get:
 
     def __init__(self, data):
         self.data = data
@@ -88,6 +88,8 @@ class get:
                 reply = self.data['message']['reply_to_message']['from'].get('last_name', '')
             elif item == 'username':
                 reply = self.data['message']['reply_to_message']['from'].get('username', 'No username')
+            else:
+                reply = 0
         else:
             reply = 0
         return reply
@@ -143,7 +145,8 @@ class get:
 
 # POST
 
-class send:
+
+class Send:
 
     def __init__(self, chat_id):
         self.chat_id = chat_id
@@ -256,7 +259,8 @@ class send:
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-class edit:
+
+class Edit:
 
     def __init__(self, chat_id, msg_id):
         self.chat_id = chat_id
@@ -272,7 +276,8 @@ class edit:
         result = requests.post(edit_text, json=answer)
         return result.json()
 
-class delete:
+
+class Delete:
 
     def __init__(self, data, chat_id, msg_id):
         self.data = data
