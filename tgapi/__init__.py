@@ -1,17 +1,18 @@
 import os
+import base64
 import requests
 
 
 def get_token():
-    token_ex = os.path.isfile('token.txt')
+    token_ex = os.path.isfile('bot_token.txt')
     if token_ex:
-        with open('token.txt', 'r') as token:
-            token = token.read()
+        with open('bot_token.txt', 'rb') as token:
+            token = base64.b64decode(token.read()).decode('utf-8')
     else:
         token = input(
             'Please input your bot API.\nIt should start with \"bot\", include \":\" and without \"/\".\n')
-        with open('token.txt', 'w') as file:
-            save = token
+        with open('bot_token.txt', 'wb') as file:
+            save = base64.b64encode(token.encode('utf-8'))
             file.write(save)
     return token
 
