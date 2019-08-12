@@ -132,7 +132,7 @@ class Send:
         self.url = url
         self.chat_id = chat_id
 
-    def text(self, text, reply_to=None, parse=None):
+    def text(self, text, reply_to=None, parse=None, **kwargs):
         answer = {
             "chat_id": self.chat_id,
             "text": text,
@@ -141,9 +141,15 @@ class Send:
             answer['reply_to_message_id'] = reply_to
         if parse:
             answer['parse_mode'] = parse
+        if kwargs:
+            for key, value in kwargs.items():
+                answer[key] = value
         msg_url = self.url + 'sendMessage'
         result = requests.post(msg_url, json=answer)
         return result.json()
+
+    def message(self, text, reply_to=None, parse=None, **kwargs):
+        return self.text(text, reply_to, parse, **kwargs)
 
     def sticker(self, file_id, reply_to=None):
         answer = {
