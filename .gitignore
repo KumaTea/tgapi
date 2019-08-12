@@ -1,8 +1,9 @@
 .pytest_cache
 .idea
 __pycache__
-bot_token.txt
-test.py
+token*
+test*.py
+pip.txt
 dist
 tgapi.egg-info
 build
