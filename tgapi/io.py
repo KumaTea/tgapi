@@ -132,10 +132,11 @@ class Send:
         self.url = url
         self.chat_id = chat_id
 
-    def text(self, text, reply_to=None, parse=None, **kwargs):
+    def text(self, text, reply_to=None, parse=None, no_preview=True, **kwargs):
         answer = {
             "chat_id": self.chat_id,
             "text": text,
+            "disable_web_page_preview": no_preview,
         }
         if reply_to:
             answer['reply_to_message_id'] = reply_to
@@ -148,8 +149,11 @@ class Send:
         result = requests.post(msg_url, json=answer)
         return result.json()
 
-    def message(self, text, reply_to=None, parse=None, **kwargs):
-        return self.text(text, reply_to, parse, **kwargs)
+    def message(self, text, reply_to=None, parse=None, no_preview=True, **kwargs):
+        return self.text(text, reply_to, parse, no_preview, **kwargs)
+
+    def markdown(self, text, reply_to=None, no_preview=True, **kwargs):
+        return self.text(text, reply_to, 'Markdown', no_preview, **kwargs)
 
     def sticker(self, file_id, reply_to=None):
         answer = {
@@ -162,14 +166,13 @@ class Send:
         result = requests.post(msg_url, json=answer)
         return result.json()
 
-    def photo(self, photo, reply_to=False, upload=False):
+    def photo(self, photo, caption, reply_to=False, upload=False):
         if upload:
             with open(photo, 'rb') as fl:
                 sending = {'photo': fl}
+                msg_url = self.url + 'sendPhoto?chat_id=' + str(self.chat_id)
                 if reply_to:
-                    msg_url = self.url + 'sendPhoto?chat_id=' + str(self.chat_id) + '&' + str(reply_to)
-                else:
-                    msg_url = self.url + 'sendPhoto?chat_id=' + str(self.chat_id)
+                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -179,18 +182,19 @@ class Send:
             }
             if reply_to:
                 answer['reply_to_message_id'] = reply_to
+            if caption:
+                answer['caption'] = caption
             msg_url = self.url + 'sendPhoto'
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def video(self, video, reply_to=False, upload=False):
+    def video(self, video, caption, reply_to=False, upload=False):
         if upload:
             with open(video, 'rb') as fl:
                 sending = {'video': fl}
+                msg_url = self.url + 'sendVideo?chat_id=' + str(self.chat_id)
                 if reply_to:
-                    msg_url = self.url + 'sendVideo?chat_id=' + str(self.chat_id) + '&' + str(reply_to)
-                else:
-                    msg_url = self.url + 'sendVideo?chat_id=' + str(self.chat_id)
+                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -200,18 +204,19 @@ class Send:
             }
             if reply_to:
                 answer['reply_to_message_id'] = reply_to
+            if caption:
+                answer['caption'] = caption
             msg_url = self.url + 'sendVideo'
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def gif(self, gif, reply_to=False, upload=False):
+    def gif(self, gif, caption, reply_to=False, upload=False):
         if upload:
             with open(gif, 'rb') as fl:
                 sending = {'animation': fl}
+                msg_url = self.url + 'sendAnimation?chat_id=' + str(self.chat_id)
                 if reply_to:
-                    msg_url = self.url + 'sendAnimation?chat_id=' + str(self.chat_id) + '&' + str(reply_to)
-                else:
-                    msg_url = self.url + 'sendAnimation?chat_id=' + str(self.chat_id)
+                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -221,18 +226,22 @@ class Send:
             }
             if reply_to:
                 answer['reply_to_message_id'] = reply_to
+            if caption:
+                answer['caption'] = caption
             msg_url = self.url + 'sendAnimation'
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def file(self, file, reply_to=False, upload=False):
+    def animation(self, gif, caption, reply_to=False, upload=False):
+        return self.gif(gif, caption, reply_to, upload)
+
+    def file(self, file, caption, reply_to=False, upload=False):
         if upload:
             with open(file, 'rb') as fl:
                 sending = {'document': fl}
+                msg_url = self.url + 'sendDocument?chat_id=' + str(self.chat_id)
                 if reply_to:
-                    msg_url = self.url + 'sendDocument?chat_id=' + str(self.chat_id) + '&' + str(reply_to)
-                else:
-                    msg_url = self.url + 'sendDocument?chat_id=' + str(self.chat_id)
+                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -242,6 +251,8 @@ class Send:
             }
             if reply_to:
                 answer['reply_to_message_id'] = reply_to
+            if caption:
+                answer['caption'] = caption
             msg_url = self.url + 'sendDocument'
             result = requests.post(msg_url, json=answer)
             return result.json()
@@ -264,18 +275,25 @@ class Edit:
         result = requests.post(edit_text, json=answer)
         return result.json()
 
+    def message(self, text):
+        return self.text(text)
+
 
 class Delete:
 
-    def __init__(self, url, chat_id, msg_id):
+    def __init__(self, url, chat_id, msg_id=None):
         self.url = url
         self.chat_id = chat_id
         self.msg_id = msg_id
 
-    def message(self):
+    def message(self, msg_id=None):
+        if self.msg_id:
+            message_id = self.msg_id
+        else:
+            message_id = msg_id
         answer = {
             "chat_id": self.chat_id,
-            "message_id": self.msg_id,
+            "message_id": message_id,
         }
         del_msg = self.url + 'deleteMessage'
         result = requests.post(del_msg, json=answer)
