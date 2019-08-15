@@ -7,25 +7,23 @@ class Get:
         self.url = url
         self.data = data
 
-    def chat(self, item='id', data=None):
-        if not data:
-            data = self.data
-        if 'message' in data:
-            chat_item = data['message']['chat'][item]
-        elif 'edited_message' in data:
-            chat_item = data['edited_message']['chat'][item]
-        elif 'channel_post' in data:
-            chat_item = data['channel_post']['chat'][item]
-        elif 'edited_channel_post' in data:
-            chat_item = data['edited_channel_post']['chat'][item]
-        elif 'channel_post' in data:
-            chat_item = data['left_chat_member']['chat'][item]
+    def chat(self, item='id'):
+        if 'message' in self.data:
+            chat_item = self.data['message']['chat'][item]
+        elif 'edited_message' in self.data:
+            chat_item = self.data['edited_message']['chat'][item]
+        elif 'channel_post' in self.data:
+            chat_item = self.data['channel_post']['chat'][item]
+        elif 'edited_channel_post' in self.data:
+            chat_item = self.data['edited_channel_post']['chat'][item]
+        elif 'channel_post' in self.data:
+            chat_item = self.data['left_chat_member']['chat'][item]
         else:
             chat_item = 0
         return chat_item
 
-    def message(self, item, prefix='message'):
-        if item == 'text':
+    def message(self, item='text', prefix='message'):
+        if 'text' in item or 'message' in item:
             return self.data[prefix]['text']
         elif item == 'id':
             if 'message' in self.data:
@@ -36,31 +34,42 @@ class Get:
                 msg_id = self.data[prefix]['message_id']
             return msg_id
         elif item == 'type':
-            if 'photo' in self.data[prefix]:
-                return 'photo'
-            elif 'video' in self.data[prefix]:
-                return 'video'
-            elif 'sticker' in self.data[prefix]:
-                return 'sticker'
-            elif 'document' in self.data[prefix]:
-                return 'document'
-            elif 'text' in self.data[prefix]:
-                return 'text'
-            else:
-                return 'Unknown Type'
-        return 'Undefined item'
+            if 'message' in self.data:
+                if 'new_chat_member' in self.data['message']:
+                    return 'new chat member'
+                elif 'text' in self.data['message']:
+                    return 'text'
+                elif 'photo' in self.data['message']:
+                    return 'photo'
+                elif 'video' in self.data['message']:
+                    return 'video'
+                elif 'sticker' in self.data['message']:
+                    return 'sticker'
+                elif 'animation' in self.data['message']:
+                    return 'gif'
+                elif 'document' in self.data['message']:
+                    return 'file'
+                elif 'edited_message' in self.data:
+                    return 'edited'
+                else:
+                    return 'unknown'
+            elif 'channel_post' or 'edited_channel_post' in self.data:
+                return 'channel post'
+            elif 'left_chat_member' in self.data:
+                return 'left chat member'
+        return 'undefined'
 
     def reply(self, item):
         if 'reply_to_message' in self.data['message']:
-            if item == 'id' or 'msgid':
+            if 'id' in item or 'msg' in item or 'message' in item:
                 reply = self.data['message']['reply_to_message']['message_id']
             elif item == 'user':
                 reply = self.data['message']['reply_to_message']['from']['id']
-            elif item == 'text':
+            elif 'text' in item or 'message' in item:
                 reply = self.data['message']['reply_to_message']['text']
             elif item == 'type':
                 reply = self.message('type', 'reply_to_message')
-            elif item == 'fileid':
+            elif 'file' in item:
                 reply = self.file('file_id', 'reply_to_message')
             elif item == 'first':
                 reply = self.data['message']['reply_to_message']['from']['first_name']
