@@ -120,7 +120,7 @@ class Get:
 
     def group_admin(self, chat_id):
         if type(chat_id) == dict:
-            chat_id = self.chat('id', chat_id)
+            chat_id = self.chat('id')
         answer = {
             "chat_id": chat_id,
         }
@@ -265,6 +265,14 @@ class Send:
             msg_url = self.url + 'sendDocument'
             result = requests.post(msg_url, json=answer)
             return result.json()
+
+    def custom(self, command, **kwargs):
+        answer = {}
+        for key, value in kwargs.items():
+            answer[key] = value
+        msg_url = self.url + f'send{command}'
+        result = requests.post(msg_url, json=answer)
+        return result.json()
 
 
 class Edit:

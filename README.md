@@ -1,6 +1,11 @@
 # TGAPI
 `tgapi`, A Python module for I/O of Telegram **bot** API
 
+#### Disclaimer
+This project is developed and maintained by unprofessional developer.
+
+DO NOT use it in production environment.
+
 ## Install
 ```bash
 pip install tgapi
