@@ -99,23 +99,45 @@ class Get:
             reply = 0
         return reply
 
-    def file(self, item='file_id'):
+    def file(self, item='file_id', media_type=None):
         if item == 'id':
             item = 'file_id'
-        if 'photo' in self.data['message']:
-            file_item = self.data['message']['photo'][-1][item]
-            return file_item
-        elif 'video' in self.data['message']:
-            file_item = self.data['message']['video'][item]
-            return file_item
-        elif 'sticker' in self.data['message']:
-            file_item = self.data['message']['sticker'][item]
-            return file_item
-        elif 'document' in self.data['message']:
-            file_item = self.data['message']['document'][item]
-            return file_item
+        if media_type:
+            if 'photo' in media_type:
+                return self.data['message']['photo'][-1][item]
+            else:
+                return self.data['message'][media_type][item]
         else:
-            return 'Unknown Type'
+            if 'photo' in self.data['message']:
+                return self.data['message']['photo'][-1][item]
+            elif 'video' in self.data['message']:
+                return self.data['message']['video'][item]
+            elif 'sticker' in self.data['message']:
+                return self.data['message']['sticker'][item]
+            elif 'animation' in self.data['message']:
+                return self.data['message']['animation'][item]
+            elif 'document' in self.data['message']:
+                return self.data['message']['document'][item]
+            else:
+                return 'Unknown Type'
+
+    def photo(self, item='file_id'):
+        return self.file(item, media_type='photo')
+
+    def video(self, item='file_id'):
+        return self.file(item, media_type='video')
+
+    def sticker(self, item='file_id'):
+        return self.file(item, media_type='sticker')
+
+    def animation(self, item='file_id'):
+        return self.file(item, media_type='animation')
+
+    def gif(self, item='file_id'):
+        return self.file(item, media_type='animation')
+
+    def document(self, item='file_id'):
+        return self.file(item, media_type='document')
 
     def user(self, item='id'):
         if item == 'id':
