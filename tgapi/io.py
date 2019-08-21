@@ -22,16 +22,16 @@ class Get:
             chat_item = 0
         return chat_item
 
-    def message(self, item='text', prefix='message'):
+    def message(self, item='text'):
         if 'text' in item or 'message' in item:
-            return self.data[prefix]['text']
+            return self.data['message']['text']
         elif item == 'id':
             if 'message' in self.data:
                 msg_id = self.data['message']['message_id']
             elif 'result' in self.data:
                 msg_id = self.data['result']['message_id']
             else:
-                msg_id = self.data[prefix]['message_id']
+                msg_id = self.data['message']['message_id']
             return msg_id
         elif item == 'type':
             if 'message' in self.data:
@@ -57,51 +57,67 @@ class Get:
                 return 'channel post'
             elif 'left_chat_member' in self.data:
                 return 'left chat member'
-        return 'undefined'
+            else:
+                return 'undefined'
+        else:
+            return self.data['message'][item]
 
-    def reply(self, item):
+    def text(self):
+        return self.message('text')
+
+    def msgid(self):
+        return self.message('id')
+
+    def type(self):
+        return self.message('type')
+
+    def caption(self):
+        return self.message('caption')
+
+    def reply(self, item='text'):
         if 'reply_to_message' in self.data['message']:
-            if 'id' in item or 'msg' in item or 'message' in item:
-                reply = self.data['message']['reply_to_message']['message_id']
+            self.data = self.data['reply_to_message']
+            if 'id' in item:
+                reply = self.message('id')
             elif item == 'user':
-                reply = self.data['message']['reply_to_message']['from']['id']
+                reply = self.user('id')
             elif 'text' in item or 'message' in item:
-                reply = self.data['message']['reply_to_message']['text']
+                reply = self.message('text')
             elif item == 'type':
-                reply = self.message('type', 'reply_to_message')
+                reply = self.message('type')
             elif 'file' in item:
-                reply = self.file('file_id', 'reply_to_message')
-            elif item == 'first':
-                reply = self.data['message']['reply_to_message']['from']['first_name']
-            elif item == 'last':
-                reply = self.data['message']['reply_to_message']['from'].get('last_name', '')
-            elif item == 'username':
-                reply = self.data['message']['reply_to_message']['from'].get('username', 'No username')
+                reply = self.file('file_id')
+            elif 'first' in item:
+                reply = self.data['message']['from']['first_name']
+            elif 'last' in item:
+                reply = self.data['message']['from'].get('last_name', '')
+            elif 'username' in item:
+                reply = self.data['message']['from'].get('username', 'No username')
             else:
                 reply = 0
         else:
             reply = 0
         return reply
 
-    def file(self, item='file_id', prefix='message'):
+    def file(self, item='file_id'):
         if item == 'id':
             item = 'file_id'
-        if 'photo' in self.data[prefix]:
-            file_item = self.data[prefix]['photo'][-1][item]
+        if 'photo' in self.data['message']:
+            file_item = self.data['message']['photo'][-1][item]
             return file_item
-        elif 'video' in self.data[prefix]:
-            file_item = self.data[prefix]['video'][item]
+        elif 'video' in self.data['message']:
+            file_item = self.data['message']['video'][item]
             return file_item
-        elif 'sticker' in self.data[prefix]:
-            file_item = self.data[prefix]['sticker'][item]
+        elif 'sticker' in self.data['message']:
+            file_item = self.data['message']['sticker'][item]
             return file_item
-        elif 'document' in self.data[prefix]:
-            file_item = self.data[prefix]['document'][item]
+        elif 'document' in self.data['message']:
+            file_item = self.data['message']['document'][item]
             return file_item
         else:
             return 'Unknown Type'
 
-    def user(self, item):
+    def user(self, item='id'):
         if item == 'id':
             user_info = self.data['message']['from']['id']
         elif 'first' in item:

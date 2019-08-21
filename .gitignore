@@ -7,4 +7,3 @@ pip.txt
 dist
 tgapi.egg-info
 build
-upload_to_pypi*
