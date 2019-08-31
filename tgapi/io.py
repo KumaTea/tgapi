@@ -213,13 +213,13 @@ class Send:
         result = requests.post(msg_url, json=answer)
         return result.json()
 
-    def photo(self, photo, caption, reply_to=False, upload=False):
+    def photo(self, photo, caption=None, reply_to=False, upload=False):
         if upload:
             with open(photo, 'rb') as fl:
                 sending = {'photo': fl}
-                msg_url = self.url + 'sendPhoto?chat_id=' + str(self.chat_id)
+                msg_url = f'{self.url}sendPhoto?chat_id={self.chat_id}'
                 if reply_to:
-                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
+                    msg_url = f'{msg_url}&reply_to_message_id={reply_to}'
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -235,13 +235,13 @@ class Send:
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def video(self, video, caption, reply_to=False, upload=False):
+    def video(self, video, caption=None, reply_to=False, upload=False):
         if upload:
             with open(video, 'rb') as fl:
                 sending = {'video': fl}
-                msg_url = self.url + 'sendVideo?chat_id=' + str(self.chat_id)
+                msg_url = f'{self.url}sendVideo?chat_id={self.chat_id}'
                 if reply_to:
-                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
+                    msg_url = f'{msg_url}&reply_to_message_id={reply_to}'
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -257,13 +257,13 @@ class Send:
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def gif(self, gif, caption, reply_to=False, upload=False):
+    def gif(self, gif, caption=None, reply_to=False, upload=False):
         if upload:
             with open(gif, 'rb') as fl:
                 sending = {'animation': fl}
-                msg_url = self.url + 'sendAnimation?chat_id=' + str(self.chat_id)
+                msg_url = f'{self.url}sendAnimation?chat_id={self.chat_id}'
                 if reply_to:
-                    msg_url = msg_url + '&reply_to_message_id=' + str(reply_to)
+                    msg_url = f'{msg_url}&reply_to_message_id={reply_to}'
                 result = requests.post(msg_url, files=sending)
             return result.json()
         else:
@@ -279,10 +279,40 @@ class Send:
             result = requests.post(msg_url, json=answer)
             return result.json()
 
-    def animation(self, gif, caption, reply_to=False, upload=False):
+    def animation(self, gif, caption=None, reply_to=False, upload=False):
         return self.gif(gif, caption, reply_to, upload)
 
-    def file(self, file, caption, reply_to=False, upload=False):
+    def mediagroup(self, album, reply_to=False, upload=False):
+        """
+        album = [
+            {'type': 'photo', 'media': ''},
+            {'type': 'photo', 'media': ''},
+            ]
+        """
+        if upload:
+            for i in range(len(album)):
+                with open(album[i]['media'], 'rb') as media:
+                    album[i]['media'] = f'attach://{media}'
+            msg_url = f'{self.url}sendMediaGroup?chat_id={self.chat_id}'
+            if reply_to:
+                msg_url = f'{msg_url}&reply_to_message_id={reply_to}'
+            result = requests.post(msg_url, files=album)
+            return result.json()
+        else:
+            answer = {
+                "chat_id": self.chat_id,
+                "media": album,
+            }
+            if reply_to:
+                answer['reply_to_message_id'] = reply_to
+            msg_url = self.url + 'sendMediaGroup'
+            result = requests.post(msg_url, json=answer)
+            return result.json()
+
+    def album(self, album, reply_to=False, upload=False):
+        return self.mediagroup(album, reply_to, upload)
+
+    def file(self, file, caption=None, reply_to=False, upload=False):
         if upload:
             with open(file, 'rb') as fl:
                 sending = {'document': fl}

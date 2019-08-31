@@ -2,7 +2,7 @@
 .idea
 __pycache__
 token*
-test*.py
+test*
 pip.txt
 dist
 tgapi.egg-info
