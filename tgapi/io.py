@@ -400,12 +400,10 @@ class Delete:
 
     def message(self, msg_id=None):
         if self.msg_id:
-            message_id = self.msg_id
-        else:
-            message_id = msg_id
+            msg_id = self.msg_id
         answer = {
             "chat_id": self.chat_id,
-            "message_id": message_id,
+            "message_id": msg_id,
         }
         del_msg = f'{self.url}deleteMessage'
         result = requests.post(del_msg, data=answer)
@@ -416,14 +414,14 @@ class Set:
 
     def __init__(self, url, webhook=None):
         self.url = url
-        self.webhook = webhook
+        self.webhook_url = webhook
 
     def webhook(self, webhook=None, source_type='url'):
         if 'rok' in source_type:
             webhook_url = requests.get('http://127.0.0.1:4040/api/tunnels').json()['tunnels'][0]['public_url']
         else:
-            if self.webhook:
-                webhook_url = self.webhook
+            if self.webhook_url:
+                webhook_url = self.webhook_url
             else:
                 webhook_url = webhook
             start_https = webhook_url.find('//')
@@ -432,6 +430,6 @@ class Set:
         answer = {
             "url": webhook_url
         }
-        set_web = f'{self.url}setWebHook'
-        result = requests.post(set_web, data=answer)
+        set_url = f'{self.url}setWebHook'
+        result = requests.post(set_url, data=answer)
         return result.json()
