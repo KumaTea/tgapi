@@ -393,7 +393,7 @@ class Edit:
 
 class Delete:
 
-    def __init__(self, url, chat_id, msg_id=None):
+    def __init__(self, url, chat_id, msg_id):
         self.url = url
         self.chat_id = chat_id
         self.msg_id = msg_id
@@ -418,8 +418,8 @@ class Set:
         self.url = url
         self.webhook = webhook
 
-    def webhook(self, webhook=None, type='url'):
-        if 'rok' in type:
+    def webhook(self, webhook=None, source_type='url'):
+        if 'rok' in source_type:
             webhook_url = requests.get('http://127.0.0.1:4040/api/tunnels').json()['tunnels'][0]['public_url']
         else:
             if self.webhook:
@@ -432,6 +432,6 @@ class Set:
         answer = {
             "url": webhook_url
         }
-        set_web = f'{self.url}deleteMessage'
+        set_web = f'{self.url}setWebHook'
         result = requests.post(set_web, data=answer)
         return result.json()

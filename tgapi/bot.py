@@ -23,3 +23,6 @@ class Bot:
 
     def query(self, chat_id):
         return Query(self.url, chat_id)
+
+    def set(self, webhook=None):
+        return Set(self.url, webhook)
