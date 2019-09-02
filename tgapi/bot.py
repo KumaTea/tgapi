@@ -1,11 +1,11 @@
 from .tools import query_token
-from .io import Get, Send, Edit, Delete
+from .io import *
 
 
 class Bot:
 
     def __init__(self, token=None):
-        bot_token = query_token(token)
+        bot_token = 'bot' + query_token(token)
         api_url = f'https://api.telegram.org/{bot_token}/'
         self.url = api_url
 
@@ -20,3 +20,6 @@ class Bot:
 
     def delete(self, chat_id, msg_id=None):
         return Delete(self.url, chat_id, msg_id)
+
+    def query(self, chat_id):
+        return Query(self.url, chat_id)

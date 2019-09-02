@@ -1,4 +1,4 @@
-Set-Location 'C:\Users\oudou\Documents\GitHub\tgapi'
+Set-Location 'D:\Games\GitHub\tgapi'
 Remove-Item -R build
 Remove-Item -R dist
 Remove-Item -R tgapi.egg-info

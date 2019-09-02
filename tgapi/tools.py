@@ -27,11 +27,11 @@ def write_file(filename, encrypt=False, content=None):
 
 def new_token():
     token = input(
-        'Please input your bot API.\nIt should start with \"bot\", include \":\" and without \"/\".\n')
+        'Please input your bot API.\nIt should include \":\", can start with \"bot\", but without \"/\".\n')
     if token.startswith('bot') and ':' in token:
-        return token
+        return token[3:]
     else:
-        return False
+        return token
 
 
 def query_token(item=None):
@@ -40,30 +40,32 @@ def query_token(item=None):
             return read_file('token_bot.txt', True)
         else:
             token = new_token()
-            while not token:
-                print('Illegal token, please retry.')
-                token = new_token()
             id_end = token.find(':')
-            if not os.path.isfile('token_' + token[3:id_end]):
-                write_file('token_' + token[3:id_end], True, token)
+            if not os.path.isfile('token_' + token[:id_end]):
+                write_file('token_' + token[:id_end], True, token)
             return token
     else:
-        if type(item) == int:  # Bot id
-            if os.path.isfile('token_' + str(item)):
-                return read_file('token_' + str(item), True)
-            else:
-                token = new_token()
-                while not token:
-                    print('Illegal token, please retry.')
-                    token = new_token()
-                id_end = token.find(':')
-                write_file('token_' + token[3:id_end], True, token)
-                return token
+        if os.path.isfile(item):  # token_12345.txt
+            return read_file(item, True)
+        elif os.path.isfile(f'token_{item}'):  # token_12345.txt
+            return read_file(f'token_{item}', True)
         else:
-            if os.path.isfile(item):  # token_12345
-                return read_file(item, True)
-            else:
+            if ':' in str(item):  # Bot token
                 id_end = item.find(':')
-                if not os.path.isfile('token_' + item[3:id_end]):
-                    write_file('token_' + item[3:id_end], True, item)
+                write_file('token_' + item[:id_end], True, item)
                 return item
+            else:  # Bot id
+                token = new_token()
+                id_end = token.find(':')
+                write_file('token_' + token[:id_end], True, token)
+                return token
+
+
+
+def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
+    proxy = f'{protocol}://{ip}:{port}'
+    os.environ['http_proxy'] = proxy
+    os.environ['HTTP_PROXY'] = proxy
+    os.environ['https_proxy'] = proxy
+    os.environ['HTTPS_PROXY'] = proxy
+    return proxy

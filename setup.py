@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
     name='tgapi',
-    version='0.2.7',
+    version='0.3.0',
     description='A Python module for I/O of Telegram bot API',
     author='KumaTea',
     author_email='oudoubleyang@outlook.com',
@@ -19,7 +19,7 @@ setup(
     install_requires=['requests'],
     setup_requires=['requests'],
     classifiers=[
-        'Development Status :: 4 - Beta',      # 3 - Alpha, 4 - Beta or 5 - Production/Stable
+        'Development Status :: 3 - Alpha',      # 3 - Alpha, 4 - Beta or 5 - Production/Stable
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
