@@ -14,10 +14,10 @@ pip install tgapi
 ## Tutorial
 First, let's initialize a bot session:
 ```python
-from tgapi import Bot
+import tgapi
 
 bot_token = 'bot123456789:AbCdEfGhIjKlMnOpQrStUvWxYz'
-my_bot = Bot(bot_token)
+my_bot = tgapi.bot(bot_token)
 ```
 Then, we can use `my_bot` to process data.
 

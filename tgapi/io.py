@@ -1,4 +1,6 @@
 import requests
+import json
+from .tools import generate_random_filename
 
 
 class Get:
@@ -314,8 +316,14 @@ class Send:
             {'type': 'photo', 'media': ''},
             ]
         """
-        if type(album) != list:
+        if type(album) != list and type(album) != tuple:
             raise TypeError
+        if type(album[0]) != dict:
+            album_dict = []
+            for i in range(len(album)):
+                album_dict.append({'type': 'photo', 'media': album[i]})
+            album, album_dict = album_dict, album
+            del album_dict
 
         msg_url = f'{self.url}sendMediaGroup'
         answer = {
@@ -324,19 +332,23 @@ class Send:
         if reply_to:
             answer['reply_to_message_id'] = reply_to
         if upload:
-            album_files = {}
-            for i in range(len(album)):
-                print('album', album)
-                album_files[i] = open(album[i]['media'], 'rb')
-                print('album_files', album_files)
-                album[i]['media'] = album_files[i]
-            sending = {'media': album}
-            print(sending)
+            sending = {}
+            for media_item in album:
+                file_path = media_item['media'].replace('attach://', '')
+                print(file_path)
+                upload_name = generate_random_filename()
+                print(upload_name)
+                media_item['media'] = f'attach://{upload_name}'
+                print(media_item)
+                sending[upload_name] = open(file_path, 'rb')
+                print(album)
+                print(sending)
+            answer['media'] = json.dumps(album)
             result = requests.post(msg_url, files=sending, data=answer)
-            for i in range(len(album)):
-                album_files[i].close()
+            for media_item in sending:
+                sending[media_item].close()
         else:
-            answer['media'] = album
+            answer['media'] = json.dumps(album)
             result = requests.post(msg_url, data=answer)
         return result.json()
 

@@ -1,5 +1,7 @@
 import os
 import base64
+import random
+import string
 
 
 def read_file(filename, encrypt=False):
@@ -61,7 +63,6 @@ def query_token(item=None):
                 return token
 
 
-
 def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
     proxy = f'{protocol}://{ip}:{port}'
     os.environ['http_proxy'] = proxy
@@ -69,3 +70,7 @@ def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
     os.environ['https_proxy'] = proxy
     os.environ['HTTPS_PROXY'] = proxy
     return proxy
+
+
+def generate_random_filename(length=16):
+    return ''.join(random.sample(string.ascii_letters, length))

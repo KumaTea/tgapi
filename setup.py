@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
     name='tgapi',
-    version='0.3.0.2',
+    version='0.3.1',
     description='A Python module for I/O of Telegram bot API',
     author='KumaTea',
     author_email='oudoubleyang@outlook.com',
