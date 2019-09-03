@@ -15,7 +15,7 @@ class Bot:
     def send(self, chat_id):
         return Send(self.url, chat_id)
 
-    def edit(self, chat_id, msg_id):
+    def edit(self, chat_id=None, msg_id=None):
         return Edit(self.url, chat_id, msg_id)
 
     def delete(self, chat_id, msg_id=None):

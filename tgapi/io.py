@@ -21,7 +21,7 @@ class Get:
         elif 'channel_post' in self.data:
             chat_item = self.data['left_chat_member']['chat'][item]
         elif 'callback_query' in self.data:
-            chat_item = self.data['callback_query']['chat'][item]
+            chat_item = self.data['callback_query']['message']['chat'][item]
         else:
             chat_item = 0
         return chat_item
@@ -188,7 +188,7 @@ class Get:
             elif 'option' in item or 'button' in item or 'key' in item:
                 return self.data['callback_query']['message']['reply_markup']
             else:
-                return self.data['callback_query']['id']
+                return self.data['callback_query'].get('inline_message_id', None)
 
 
 # POST
@@ -248,11 +248,13 @@ class Send:
         if parse:
             answer['parse_mode'] = parse
         if reply_markup:
-            if 'inline_keyboard' in reply_markup and type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
-                for i in range(len(reply_markup['inline_keyboard'])):
-                    for j in range(len(reply_markup['inline_keyboard'][i])):
-                        reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
-            answer['reply_markup'] = reply_markup
+            if 'inline_keyboard' in reply_markup:
+                if 'callback_data' in reply_markup['inline_keyboard'][0][0]:
+                    if type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
+                        for i in range(len(reply_markup['inline_keyboard'])):
+                            for j in range(len(reply_markup['inline_keyboard'][i])):
+                                reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
+            answer['reply_markup'] = json.dumps(reply_markup)
         if kwargs:
             for key, value in kwargs.items():
                 answer[key] = value
@@ -441,7 +443,7 @@ class Edit:
     def message(self, text):
         return self.text(text)
 
-    def reply_markup(self, reply_markup):
+    def reply_markup(self, reply_markup, inline_message_id=None):
         """
         {'inline_keyboard': [[
             {
@@ -454,11 +456,19 @@ class Edit:
             }
         ]]}
         """
-        answer = {
-            "chat_id": self.chat_id,
-            "message_id": self.msg_id,
-            "text": reply_markup,
-        }
+        answer = {}
+        if 'inline_keyboard' in reply_markup:
+            if 'callback_data' in reply_markup['inline_keyboard'][0][0]:
+                if type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
+                    for i in range(len(reply_markup['inline_keyboard'])):
+                        for j in range(len(reply_markup['inline_keyboard'][i])):
+                            reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
+        answer['reply_markup'] = json.dumps(reply_markup)
+        if inline_message_id:
+            answer['inline_message_id'] = inline_message_id
+        else:
+            answer['chat_id'] = self.chat_id
+            answer['message_id'] = self.msg_id
         edit_text = f'{self.url}editMessageReplyMarkup'
         result = requests.post(edit_text, data=answer)
         return result.json()
