@@ -20,6 +20,8 @@ class Get:
             chat_item = self.data['edited_channel_post']['chat'][item]
         elif 'channel_post' in self.data:
             chat_item = self.data['left_chat_member']['chat'][item]
+        elif 'callback_query' in self.data:
+            chat_item = self.data['callback_query']['chat'][item]
         else:
             chat_item = 0
         return chat_item
@@ -28,10 +30,10 @@ class Get:
         if 'text' in item or 'message' in item:
             return self.data['message']['text']
         elif item == 'id':
-            if 'message' in self.data:
-                msg_id = self.data['message']['message_id']
-            elif 'result' in self.data:
+            if 'result' in self.data:
                 msg_id = self.data['result']['message_id']
+            elif 'callback_query' in self.data:
+                msg_id = self.data['callback_query']['message']['message_id']
             else:
                 msg_id = self.data['message']['message_id']
             return msg_id
@@ -59,6 +61,8 @@ class Get:
                 return 'channel post'
             elif 'left_chat_member' in self.data:
                 return 'left chat member'
+            elif 'callback_query' in self.data:
+                return 'callback query'
             else:
                 return 'undefined'
         else:
@@ -171,6 +175,21 @@ class Get:
             admin_list.append(admin_user['user']['id'])
         return admin_list
 
+    def callback_query(self, item='id', raw=False):
+        if raw:
+            return self.data['callback_query']
+        else:
+            if 'from' in item or 'user' in item:
+                return self.data['callback_query']['from']['id']
+            elif 'msg' in item or 'message' in item:
+                return self.data['callback_query']['message']['message_id']
+            elif 'data' in item:
+                return json.loads(self.data['callback_query']['data'])
+            elif 'option' in item or 'button' in item or 'key' in item:
+                return self.data['callback_query']['message']['reply_markup']
+            else:
+                return self.data['callback_query']['id']
+
 
 # POST
 
@@ -187,7 +206,7 @@ class Query:
         get_chat = f'{self.url}getChat'
         chat = requests.post(get_chat, data=answer).json()
         if raw:
-            return chat
+            return chat['result']
         else:
             if item:
                 return chat[item] if item in chat else None
@@ -201,12 +220,12 @@ class Query:
         get_admin = f'{self.url}getChatAdministrators'
         admins = requests.post(get_admin, data=answer).json()
         if raw:
-            return admins
+            return admins['result']
         else:
             admin_list = []
             for admin_user in admins['result']:
                 admin_list.append(admin_user['user']['id'])
-            return
+            return admin_list
 
     def chat_administrators(self, chat_id, raw=False):
         return self.group_admin(chat_id, raw)
@@ -218,7 +237,7 @@ class Send:
         self.url = url
         self.chat_id = chat_id
 
-    def text(self, text, reply_to=None, parse=None, no_preview=True, **kwargs):
+    def text(self, text, reply_to=None, parse=None, no_preview=True, reply_markup=None, **kwargs):
         answer = {
             "chat_id": self.chat_id,
             "text": text,
@@ -228,6 +247,12 @@ class Send:
             answer['reply_to_message_id'] = reply_to
         if parse:
             answer['parse_mode'] = parse
+        if reply_markup:
+            if 'inline_keyboard' in reply_markup and type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
+                for i in range(len(reply_markup['inline_keyboard'])):
+                    for j in range(len(reply_markup['inline_keyboard'][i])):
+                        reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
+            answer['reply_markup'] = reply_markup
         if kwargs:
             for key, value in kwargs.items():
                 answer[key] = value
@@ -401,6 +426,28 @@ class Edit:
 
     def message(self, text):
         return self.text(text)
+
+    def reply_markup(self, reply_markup):
+        """
+        {'inline_keyboard': [[
+            {
+                'text': 'A',
+                'callback_data': json.dumps({'id': 'test001', 'e': 'A'}),
+            },
+            {
+                'text': 'B',
+                'callback_data': json.dumps({'id': 'test001', 'e': 'B'}),
+            }
+        ]]}
+        """
+        answer = {
+            "chat_id": self.chat_id,
+            "message_id": self.msg_id,
+            "text": reply_markup,
+        }
+        edit_text = f'{self.url}editMessageReplyMarkup'
+        result = requests.post(edit_text, data=answer)
+        return result.json()
 
 
 class Delete:
