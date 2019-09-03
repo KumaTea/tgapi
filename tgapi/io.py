@@ -398,6 +398,20 @@ class Send:
             result = requests.post(msg_url, data=answer)
         return result.json()
 
+    def answer_callback_query(self, callback_query_id, text, show_alert=False, url=None):
+        msg_url = f'{self.url}answerCallbackQuery'
+        answer = {
+            "callback_query_id": callback_query_id,
+        }
+        if text:
+            answer['text'] = text
+        if show_alert:
+            answer['show_alert'] = show_alert
+        if url:
+            answer['url'] = url
+        result = requests.post(msg_url, data=answer)
+        return result.json()
+
     def custom(self, command, **kwargs):
         answer = {}
         for key, value in kwargs.items():
