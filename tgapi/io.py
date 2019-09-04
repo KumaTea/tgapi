@@ -188,7 +188,7 @@ class Get:
             elif 'option' in item or 'button' in item or 'key' in item:
                 return self.data['callback_query']['message']['reply_markup']
             else:
-                return self.data['callback_query'].get('inline_message_id', None)
+                return self.data['callback_query']['id']
 
 
 # POST
@@ -262,8 +262,8 @@ class Send:
         result = requests.post(msg_url, data=answer)
         return result.json()
 
-    def message(self, text, reply_to=None, parse=None, no_preview=True, **kwargs):
-        return self.text(text, reply_to, parse, no_preview, **kwargs)
+    def message(self, text, reply_to=None, parse=None, no_preview=True, reply_markup=None, **kwargs):
+        return self.text(text, reply_to, parse, no_preview, reply_markup, **kwargs)
 
     def markdown(self, text, reply_to=None, no_preview=True, **kwargs):
         return self.text(text, reply_to, 'Markdown', no_preview, **kwargs)
