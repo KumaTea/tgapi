@@ -57,7 +57,7 @@ class Get:
                     return 'edited'
                 else:
                     return 'unknown'
-            elif 'channel_post' or 'edited_channel_post' in self.data:
+            elif 'channel_post' in self.data or 'edited_channel_post' in self.data:
                 return 'channel post'
             elif 'left_chat_member' in self.data:
                 return 'left chat member'
