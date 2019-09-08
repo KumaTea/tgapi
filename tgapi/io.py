@@ -18,7 +18,7 @@ class Get:
             chat_item = self.data['channel_post']['chat'][item]
         elif 'edited_channel_post' in self.data:
             chat_item = self.data['edited_channel_post']['chat'][item]
-        elif 'channel_post' in self.data:
+        elif 'left_chat_member' in self.data:
             chat_item = self.data['left_chat_member']['chat'][item]
         elif 'callback_query' in self.data:
             chat_item = self.data['callback_query']['message']['chat'][item]
@@ -34,6 +34,14 @@ class Get:
                 msg_id = self.data['result']['message_id']
             elif 'callback_query' in self.data:
                 msg_id = self.data['callback_query']['message']['message_id']
+            elif 'edited_message' in self.data:
+                msg_id = self.data['edited_message']['message_id']
+            elif 'channel_post' in self.data:
+                msg_id = self.data['channel_post']['message_id']
+            elif 'edited_channel_post' in self.data:
+                msg_id = self.data['edited_channel_post']['message_id']
+            elif 'left_chat_member' in self.data:
+                msg_id = self.data['left_chat_member']['message_id']
             else:
                 msg_id = self.data['message']['message_id']
             return msg_id
