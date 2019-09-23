@@ -90,7 +90,7 @@ class Get:
 
     def reply(self, item='text'):
         if 'reply_to_message' in self.data['message']:
-            self.data = self.data['reply_to_message']
+            self.data = self.data['message']['reply_to_message']
             if 'id' in item:
                 reply = self.message('id')
             elif item == 'user':
@@ -221,7 +221,9 @@ class Query:
             else:
                 return chat['id'] if str(self.chat_id).startswith('@') else chat['username']
 
-    def group_admin(self, chat_id, raw=False):
+    def chat_administrators(self, chat_id=None, raw=False):
+        if not chat_id:
+            chat_id = self.chat_id
         answer = {
             "chat_id": chat_id,
         }
@@ -235,8 +237,18 @@ class Query:
                 admin_list.append(admin_user['user']['id'])
             return admin_list
 
-    def chat_administrators(self, chat_id, raw=False):
-        return self.group_admin(chat_id, raw)
+    def group_admin(self, chat_id=None, raw=False):
+        return self.chat_administrators(chat_id, raw)
+
+    def chat_members_count(self, chat_id=None):
+        if not chat_id:
+            chat_id = self.chat_id
+        answer = {
+            "chat_id": chat_id,
+        }
+        get_admin = f'{self.url}getChatMembersCount'
+        count = requests.post(get_admin, data=answer).json()
+        return count['result']
 
 
 class Send:

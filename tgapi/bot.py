@@ -21,7 +21,7 @@ class Bot:
     def delete(self, chat_id, msg_id=None):
         return Delete(self.url, chat_id, msg_id)
 
-    def query(self, chat_id):
+    def query(self, chat_id=None):
         return Query(self.url, chat_id)
 
     def set(self, webhook=None):
