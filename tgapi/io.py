@@ -90,23 +90,49 @@ class Get:
 
     def reply(self, item='text'):
         if 'reply_to_message' in self.data['message']:
-            self.data = self.data['message']['reply_to_message']
+            reply_data = self.data['message']['reply_to_message']
             if 'id' in item:
-                reply = self.message('id')
+                reply = reply_data['message_id']
             elif item == 'user':
-                reply = self.user('id')
+                reply = reply_data['from']['id']
             elif 'text' in item or 'message' in item:
-                reply = self.message('text')
+                reply = reply_data['text']
             elif item == 'type':
-                reply = self.message('type')
+                if 'new_chat_member' in reply_data:
+                    reply = 'new chat member'
+                elif 'text' in reply_data:
+                    reply = 'text'
+                elif 'photo' in reply_data:
+                    reply = 'photo'
+                elif 'video' in reply_data:
+                    reply = 'video'
+                elif 'sticker' in reply_data:
+                    reply = 'sticker'
+                elif 'animation' in reply_data:
+                    reply = 'gif'
+                elif 'document' in reply_data:
+                    reply = 'file'
+                else:
+                    reply = 'unknown'
             elif 'file' in item:
-                reply = self.file('file_id')
+                if 'photo' in reply_data:
+                    reply = reply_data['photo'][-1]['file_id']
+                elif 'video' in reply_data:
+                    reply = reply_data['video']['file_id']
+                elif 'sticker' in reply_data:
+                    reply = reply_data['sticker']['file_id']
+                elif 'animation' in reply_data:
+                    reply = reply_data['animation']['file_id']
+                elif 'document' in reply_data:
+                    reply = reply_data['document']['file_id']
+                else:
+                    reply = 'Unknown Type'
             elif 'first' in item:
-                reply = self.data['message']['from']['first_name']
+                reply = reply_data['from']['first_name']
             elif 'last' in item:
-                reply = self.data['message']['from'].get('last_name', '')
+                reply = reply_data['from'].get('last_name', '')
             elif 'username' in item:
-                reply = self.data['message']['from'].get('username', 'No username')
+                reply = reply_data['from'].get('username', 'No username')
             else:
                 reply = 0
         else:
