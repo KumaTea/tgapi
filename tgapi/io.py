@@ -225,7 +225,7 @@ class Get:
                 return self.data['callback_query']['id']
 
 
-# POST
+# HTTP REQUEST
 
 class Query:
 
@@ -276,6 +276,18 @@ class Query:
         count = requests.post(get_admin, data=answer).json()
         return count['result']
 
+    def file_url(self, file_id):
+        answer = {
+            "file_id": file_id,
+        }
+        get_file = f'{self.url}getFile'
+        file = requests.post(get_file, data=answer).json()
+        if file['ok']:
+            url = self.url.replace('org/bot', 'org/file/bot') + file['file_path']
+            return url
+        else:
+            return False
+
 
 class Send:
 
@@ -310,6 +322,17 @@ class Send:
 
     def message(self, text, reply_to=None, parse=None, no_preview=True, reply_markup=None, **kwargs):
         return self.text(text, reply_to, parse, no_preview, reply_markup, **kwargs)
+
+    def forward(self, chat_id, msg_id, disable_notification=False):
+        answer = {
+            "chat_id": self.chat_id,
+            "from_chat_id": chat_id,
+            "disable_notification": disable_notification,
+            "message_id": msg_id,
+        }
+        msg_url = f'{self.url}forwardMessage'
+        result = requests.post(msg_url, data=answer)
+        return result.json()
 
     def markdown(self, text, reply_to=None, no_preview=True, **kwargs):
         return self.text(text, reply_to, 'Markdown', no_preview, **kwargs)
