@@ -1,3 +1,6 @@
+from tgapi import __version__
+
+
 try:
     from setuptools import setup, find_packages
     package = find_packages(exclude=['example', 'test', 'dist'])
@@ -7,7 +10,7 @@ except ImportError:
 
 setup(
     name='tgapi',
-    version='0.3.2.8.1',
+    version=__version__,
     description='A Python module for I/O of Telegram bot API',
     author='KumaTea',
     author_email='oudoubleyang@outlook.com',

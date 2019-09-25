@@ -47,7 +47,7 @@ class Get:
             return msg_id
         elif item == 'type':
             if 'message' in self.data:
-                if 'new_chat_member' in self.data['message']:
+                if 'new_chat_member' in self.data['message'] or 'new_chat_members' in self.data['message']:
                     return 'new chat member'
                 elif 'text' in self.data['message']:
                     return 'text'
@@ -61,12 +61,12 @@ class Get:
                     return 'gif'
                 elif 'document' in self.data['message']:
                     return 'file'
+                elif 'left_chat_member' in self.data['message']:
+                    return 'left chat member'
             elif 'edited_message' in self.data:
                 return 'edited message'
             elif 'channel_post' in self.data or 'edited_channel_post' in self.data:
                 return 'channel post'
-            elif 'left_chat_member' in self.data:
-                return 'left chat member'
             elif 'callback_query' in self.data:
                 return 'callback query'
             else:
