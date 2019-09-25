@@ -63,6 +63,8 @@ class Get:
                     return 'file'
                 elif 'left_chat_member' in self.data['message']:
                     return 'left chat member'
+                else:
+                    return 'undefined'
             elif 'edited_message' in self.data:
                 return 'edited message'
             elif 'channel_post' in self.data or 'edited_channel_post' in self.data:
