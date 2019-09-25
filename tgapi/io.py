@@ -61,10 +61,8 @@ class Get:
                     return 'gif'
                 elif 'document' in self.data['message']:
                     return 'file'
-                elif 'edited_message' in self.data:
-                    return 'edited'
-                else:
-                    return 'unknown'
+            elif 'edited_message' in self.data:
+                return 'edited message'
             elif 'channel_post' in self.data or 'edited_channel_post' in self.data:
                 return 'channel post'
             elif 'left_chat_member' in self.data:
