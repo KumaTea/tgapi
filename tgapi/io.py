@@ -196,19 +196,6 @@ class Get:
             user_info = 'Unknown argument'
         return user_info
 
-    def group_admin(self, chat_id):
-        if type(chat_id) == dict:
-            chat_id = self.chat('id')
-        answer = {
-            "chat_id": chat_id,
-        }
-        get_admin = f'{self.url}getChatAdministrators'
-        admins = requests.post(get_admin, data=answer).json()
-        admin_list = []
-        for admin_user in admins['result']:
-            admin_list.append(admin_user['user']['id'])
-        return admin_list
-
     def callback_query(self, item='id', raw=False):
         if raw:
             return self.data['callback_query']
