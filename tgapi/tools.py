@@ -13,18 +13,15 @@ def read_file(filename, encrypt=False):
             return f.read()
 
 
-def write_file(filename, encrypt=False, content=None):
-    if not content:
-        raise SystemError
+def write_file(content, filename, encrypt=False):
+    if encrypt:
+        with open(filename, 'wb') as f:
+            f.write(base64.b64encode(content.encode('utf-8')))
+        return True
     else:
-        if encrypt:
-            with open(filename, 'wb') as f:
-                f.write(base64.b64encode(content.encode('utf-8')))
-            return True
-        else:
-            with open(filename, 'w') as f:
-                f.write(content)
-            return True
+        with open(filename, 'w') as f:
+            f.write(content)
+        return True
 
 
 def new_token():

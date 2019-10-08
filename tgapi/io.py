@@ -71,10 +71,20 @@ class Get:
                 return 'channel post'
             elif 'callback_query' in self.data:
                 return 'callback query'
+            elif 'result' in self.data:
+                return 'result'
             else:
                 return 'undefined'
+        elif 'time' in item or 'date' in item:
+            if 'result' in self.data:
+                return self.data['result']['date']
+            else:
+                return self.data['message']['date']
         else:
-            return self.data['message'][item]
+            if 'result' in self.data:
+                return self.data['result'][item]
+            else:
+                return self.data['message'][item]
 
     def text(self):
         return self.message('text')
@@ -252,6 +262,19 @@ class Query:
 
     def group_admin(self, chat_id=None, raw=False):
         return self.chat_administrators(chat_id, raw)
+
+    def chat_member(self, user_id, raw=False):
+        chat_id = self.chat_id
+        answer = {
+            "chat_id": chat_id,
+            "user_id": user_id,
+        }
+        get_admin = f'{self.url}getChatMember'
+        result = requests.post(get_admin, data=answer).json()
+        if raw:
+            return result['result']
+        else:
+            return result['result']['user']
 
     def chat_members_count(self, chat_id=None):
         if not chat_id:
