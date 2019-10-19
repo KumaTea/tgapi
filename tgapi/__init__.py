@@ -1,7 +1,7 @@
 from .bot import Bot
 
 
-__version__ = '0.3.2.9'
+__version__ = '0.3.3'
 
 
 def bot(token=None):
