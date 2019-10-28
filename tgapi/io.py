@@ -305,11 +305,13 @@ class Send:
         self.url = url
         self.chat_id = chat_id
 
-    def text(self, text, reply_to=None, parse=None, no_preview=True, reply_markup=None, **kwargs):
+    def text(self, text, reply_to=None, parse=None,
+             no_preview=True, reply_markup=None, no_notification=False, **kwargs):
         answer = {
             "chat_id": self.chat_id,
             "text": text,
             "disable_web_page_preview": no_preview,
+            'disable_notification': no_notification,
         }
         if reply_to:
             answer['reply_to_message_id'] = reply_to
@@ -321,7 +323,8 @@ class Send:
                     if type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
                         for i in range(len(reply_markup['inline_keyboard'])):
                             for j in range(len(reply_markup['inline_keyboard'][i])):
-                                reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
+                                reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(
+                                    reply_markup['inline_keyboard'][i][j]['callback_data'])
             answer['reply_markup'] = json.dumps(reply_markup)
         if kwargs:
             for key, value in kwargs.items():
@@ -541,7 +544,8 @@ class Edit:
                 if type(reply_markup['inline_keyboard'][0][0]['callback_data']) == dict:
                     for i in range(len(reply_markup['inline_keyboard'])):
                         for j in range(len(reply_markup['inline_keyboard'][i])):
-                            reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(reply_markup['inline_keyboard'][i][j]['callback_data'])
+                            reply_markup['inline_keyboard'][i][j]['callback_data'] = json.dumps(
+                                reply_markup['inline_keyboard'][i][j]['callback_data'])
         answer['reply_markup'] = json.dumps(reply_markup)
         if inline_message_id:
             answer['inline_message_id'] = inline_message_id
