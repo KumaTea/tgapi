@@ -35,13 +35,14 @@ def new_token():
 
 def query_token(item=None):
     if not item:
-        if os.path.isfile('token_bot.txt'):
-            return read_file('token_bot.txt', True)
+        for i in os.listdir('.'):
+            if os.path.isfile(i) and 'token' in i:
+                return read_file(i, True)
         else:
             token = new_token()
             id_end = token.find(':')
             if not os.path.isfile('token_' + token[:id_end]):
-                write_file('token_' + token[:id_end], True, token)
+                write_file('token_' + token[:id_end], token, True)
             return token
     else:
         if os.path.isfile(item):  # token_12345.txt
@@ -56,7 +57,7 @@ def query_token(item=None):
             else:  # Bot id
                 token = new_token()
                 id_end = token.find(':')
-                write_file('token_' + token[:id_end], True, token)
+                write_file('token_' + token[:id_end], token, True)
                 return token
 
 

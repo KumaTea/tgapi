@@ -1,4 +1,14 @@
 # TGAPI
+
+## TERMINATION
+Due to various reasons, this project have been TERMINATED.
+
+For the concern of projects using this, the module on `pypi` will not be deleted, but switching to a stable one is highly recommended.
+
+Thank you for your support.
+
+---
+
 `tgapi`, A Python module for I/O of Telegram **bot** API
 
 #### Disclaimer
